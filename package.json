@@ -24,6 +24,10 @@
   "author": "Petr John",
   "license": "MIT",
   "keywords": ["IoT", "VPL", "Pocketix"],
+  "bugs": {
+	"url": "https://github.com/pocketix/pocketix-node/issues"
+  },
+  "homepage": "https://github.com/pocketix/pocketix-node#readme",
   "dependencies": {
     "tslib": "^2.6.2"
   }
