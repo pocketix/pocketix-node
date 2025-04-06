@@ -48,7 +48,7 @@ npm run test
 
 ## **Related Projects**
 - 🔗 [vpl-for-things](https://github.com/pocketix/vpl-for-things) — WIP version of new editor built in Lit compatible with Pocketix v2 language
-- 🔗 [pocketix-react](https://github.com/pocketix/pocketix-react) — React version of the editor
+- 🔗 [pocketix-react](https://github.com/pocketix/pocketix-react) — React-based scripting editor for the same ecosystem
 - 🔗 [pocketixng](https://github.com/pocketix/pocketixng) — Angular-based scripting editor for the same ecosystem
 - 🔗 [Pocketix Node Core](https://github.com/pocketix/pocketix-node-core) — A simple environment for basic IoT management
 
