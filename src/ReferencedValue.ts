@@ -1,5 +1,5 @@
-import {ValueType} from './ValueType';
-import {Reference} from './Operators';
+import { ValueType } from "./ValueType";
+import { Reference } from "./Operators";
 
 type ReferencedValueItemsAsObject = { parameterName: string; deviceId: number };
 
@@ -49,10 +49,10 @@ abstract class ReferencedValue {
     }
 
     private _value: any;
-    private _type: ValueType;
-    private _dirty: boolean;
+    private _type: ValueType = ValueType.Number;
+    private _dirty: boolean = false;
     private _deviceId: any;
-    private _parameterName: string;
+    private _parameterName: string = "";
 
     public static createReferenceTarget(deviceId: number, parameterName: string): string {
         return `${deviceId}.${parameterName}`;

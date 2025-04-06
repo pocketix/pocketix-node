@@ -27,7 +27,7 @@ enum Operators {
 
 abstract class Operator implements IRepresentable {
     protected _operandCount = 0;
-    protected _operator: Operators;
+    protected _operator: Operators = Operators.And;
 
     get operandCount(): number {
         return this._operandCount;
@@ -225,6 +225,7 @@ class Reference extends Operator {
         super();
         this._operandCount = 1;
         this._operator = Operators.Parameter;
+        this._referenceTarget = "";
         references.push(this);
     }
 

@@ -29,7 +29,11 @@ class Program implements IEvaluable, IRepresentable {
 
     public setReferencesTargets(targets: ReferencedValue[]): void {
         this.references.forEach(reference => {
-            referenceTable[reference.referenceTarget] = targets.find(target => target.referenceTarget === reference.referenceTarget);
+            if (reference.referenceTarget) {
+                referenceTable[reference.referenceTarget] = targets.find(target =>
+                  target.referenceTarget === reference.referenceTarget
+                ) as ReferencedValue;
+            }
         });
     }
 

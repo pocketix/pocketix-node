@@ -7,6 +7,10 @@ import {ReferencedValue} from './ReferencedValue';
 
 class ProgramRunner implements IRepresentable {
     get referenceManager(): IReferenceManager {
+        if (!this._referenceManager) {
+            throw new Error("No reference manager")
+        }
+
         return this._referenceManager;
     }
 
@@ -14,20 +18,28 @@ class ProgramRunner implements IRepresentable {
         this._referenceManager = value;
     }
     get commander(): ICommander {
+        if (!this._commander) {
+            throw new Error("No commander")
+        }
+
         return this._commander;
     }
 
     set commander(value: ICommander) {
         this._commander = value;
     }
-    private program: Program;
-    private _commander: ICommander;
-    private _referenceManager: IReferenceManager;
+    private program: Program = {} as Program;
+    private _commander: ICommander | undefined;
+    private _referenceManager: IReferenceManager | undefined;
 
     constructor() {
     }
 
     async run(dry: boolean = false): Promise<{ toUpdate: ReferencedValue[]; commands: Command[] }> {
+        if (!this._referenceManager || !this._commander) {
+            throw new Error("No reference manager or commander")
+        }
+
         const references = await this._referenceManager
             .load(this.program.getReferencesToLoad().map(item => ReferencedValue.fromReference(item)));
 

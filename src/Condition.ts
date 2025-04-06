@@ -1,13 +1,13 @@
 import {IEvaluable} from './IEvaluable';
 import {IRepresentable} from './IRepresentable';
-import {Hours, Operator, Reference} from './Operators';
+import { Hours, Operator, Operators, Reference } from "./Operators";
 import {isPrimitive, Operand, OperandFactory} from './OperandFactory';
 import {OperatorFactory} from './OperatorFactory';
 
 class Condition implements IEvaluable, IRepresentable {
     private static REGEX = /(\w+\.\w+)/gm;
-    private _operator: Operator;
-    private _operands: Operand[];
+    private _operator: Operator | undefined;
+    private _operands: Operand[] = [];
     private operatorFactory: OperatorFactory = new OperatorFactory();
     private operandFactory: OperandFactory = new OperandFactory();
     private referencesForBasicCondition: Reference[] = [];
@@ -23,10 +23,12 @@ class Condition implements IEvaluable, IRepresentable {
             return;
         }
 
-        this._operands = raw.operands.map(operand => this.operandFactory.create(operand));
+        this._operands = (raw.operands as Operand[]).map(operand => this.operandFactory.create(operand));
         this._operator = this.operatorFactory.create(raw.operator);
 
-        this._operator.initializeOperands(this._operands);
+        if (this._operator) {
+          this._operator.initializeOperands(this._operands);
+        }
 
         if ((!this.operator && this.operands?.length) || (this.operator && !this.operands?.length)) {
             throw new Error('No operands or unrecognized operator');
@@ -38,6 +40,10 @@ class Condition implements IEvaluable, IRepresentable {
     }
 
     private handleBasicConditions(): void {
+        if (!this.raw) {
+            return
+        }
+
         let matches = Condition.REGEX.exec(this.raw);
 
         while (matches !== null) {
@@ -64,7 +70,7 @@ class Condition implements IEvaluable, IRepresentable {
     }
 
     get operator(): Operator {
-        return this._operator;
+        return <Operator>this._operator;
     }
 
     set operator(value: Operator) {
@@ -73,7 +79,7 @@ class Condition implements IEvaluable, IRepresentable {
 
     evaluate(): any {
         if (this.isBasicCondition) {
-            let raw = this.raw;
+            let raw = this.raw || "";
             this.referencesForBasicCondition.forEach(
                 reference => raw = raw.replace(reference.referenceTarget, JSON.stringify(reference.value))
             );
