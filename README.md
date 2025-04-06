@@ -63,6 +63,3 @@ We welcome contributions! To get involved:
 ## **License**
 This project is licensed under the MIT License.  
 See the [LICENSE](LICENSE) file for more information.
-
-## **Roadmap**
-- 📦 Library distribution for embedding in other apps
