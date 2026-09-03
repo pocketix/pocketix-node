@@ -5,6 +5,7 @@ import {If, IfBranch} from '../src/If';
 import {Fork} from '../src/Fork';
 import {Command} from '../src/Command';
 import {Write} from '../src/Write';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 
 describe('Test commandFactory', () => {
     describe('Test correct commandable being created', () => {
@@ -20,7 +21,7 @@ describe('Test commandFactory', () => {
                     }
                 ],
                 condition: '5451.Relay1 === \'open\''
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof IfBranch, true);
         });
@@ -39,7 +40,7 @@ describe('Test commandFactory', () => {
                     ],
                     condition: '5451.Relay1 === \'open\''
                 }
-            ]);
+            ], new ReferenceRegistry());
 
             strictEqual(result instanceof If, true);
         });
@@ -57,7 +58,7 @@ describe('Test commandFactory', () => {
                     ],
                     condition: '5451.Relay1 === \'open\''
                 }
-            ]);
+            ], new ReferenceRegistry());
 
             strictEqual(result instanceof If, true);
         });
@@ -80,7 +81,7 @@ describe('Test commandFactory', () => {
                     }
                 ],
                 condition: ''
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof Fork, true);
         });
@@ -91,7 +92,7 @@ describe('Test commandFactory', () => {
             const result = commandFactory.create({
                 name: '5451.56.close',
                 params: []
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof Command, true);
         });
@@ -102,7 +103,7 @@ describe('Test commandFactory', () => {
             const result = commandFactory.create({
                 reference: '5451.56',
                 value: '10'
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof Write, true);
         });

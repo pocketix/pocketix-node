@@ -1,5 +1,5 @@
 import {deepStrictEqual} from 'assert';
-import {referenceTable} from '../src/Program';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 import {ValueType} from '../src/ValueType';
 import {Write} from '../src/Write';
 import {MockReferencedValue} from './MockReferencedValue';
@@ -12,7 +12,7 @@ describe('Test Write', () => {
             value: '10'
         };
 
-        const block = new Write(rawBlock);
+        const block = new Write(rawBlock, new ReferenceRegistry());
 
         deepStrictEqual(block.represent(), rawBlock);
     });
@@ -26,7 +26,8 @@ describe('Test Write', () => {
             value: expectedValue
         };
 
-        const reference = new Reference();
+        const registry = new ReferenceRegistry();
+        const reference = new Reference(registry);
 
         reference.initializeOperands(['variable']);
 
@@ -38,16 +39,16 @@ describe('Test Write', () => {
             _parameterName: 'number'
         };
 
-        referenceTable[referenceString] = Object.assign(new MockReferencedValue(), referencedValue);
+        registry.referenceTable[referenceString] = Object.assign(new MockReferencedValue(), referencedValue);
         const newReference = Object.assign(new MockReferencedValue(), {
             ...referencedValue,
             _dirty: true,
             _value: expectedValue
         });
 
-        const write = new Write(rawBlock);
+        const write = new Write(rawBlock, registry);
         write.evaluate();
 
-        deepStrictEqual(referenceTable[referenceString], newReference);
+        deepStrictEqual(registry.referenceTable[referenceString], newReference);
     });
 });

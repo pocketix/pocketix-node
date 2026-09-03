@@ -4,6 +4,7 @@ import {Operator, Operators} from "./Operators";
 import {isPrimitive, Operand, OperandFactory} from './OperandFactory';
 import {OperatorFactory} from './OperatorFactory';
 import {BasicConditionParser, evaluateBasicCondition, ParsedNode} from './BasicConditionParser';
+import type {ReferenceRegistry} from './ReferenceRegistry';
 
 class Condition implements IEvaluable, IRepresentable {
     private _operator: Operator | undefined;
@@ -14,17 +15,17 @@ class Condition implements IEvaluable, IRepresentable {
     private readonly isBasicCondition: boolean;
     private raw?: string;
 
-    constructor(raw: any) {
+    constructor(raw: any, registry: ReferenceRegistry) {
         this.isBasicCondition = typeof raw === 'string';
 
         if (this.isBasicCondition) {
             this.raw = raw as string;
-            this.handleBasicConditions();
+            this.handleBasicConditions(registry);
             return;
         }
 
-        this._operands = (raw.operands as Operand[]).map(operand => this.operandFactory.create(operand));
-        this._operator = this.operatorFactory.create(raw.operator);
+        this._operands = (raw.operands as Operand[]).map(operand => this.operandFactory.create(operand, registry));
+        this._operator = this.operatorFactory.create(raw.operator, registry);
 
         if (this._operator) {
           this._operator.initializeOperands(this._operands);
@@ -39,12 +40,12 @@ class Condition implements IEvaluable, IRepresentable {
         }
     }
 
-    private handleBasicConditions(): void {
+    private handleBasicConditions(registry: ReferenceRegistry): void {
         if (!this.raw) {
             return
         }
 
-        this.parsedCondition = new BasicConditionParser().parse(this.raw).ast;
+        this.parsedCondition = new BasicConditionParser().parse(this.raw, registry).ast;
     }
 
     get operands(): any[] {

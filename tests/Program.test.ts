@@ -1,4 +1,4 @@
-import {Program, references, referenceTable} from '../src/Program';
+import {Program} from '../src/Program';
 import {deepStrictEqual} from 'assert';
 import {ValueType} from '../src/ValueType';
 import {MockReferencedValue} from './MockReferencedValue';
@@ -12,34 +12,33 @@ const programs = {
 };
 
 let isBetweenHours = false;
+let referencedValues: MockReferencedValue[] = [];
 
 describe('Test program', () => {
     beforeEach(() => {
-        references.length = 0;
-
-        referenceTable['5439.lvl_measurement_percent_full'] = Object.assign(new MockReferencedValue(), {
-            _value: 50,
-            _type: ValueType.Number,
-            _dirty: false,
-            _deviceId: 5439,
-            _parameterName: 'lvl_measurement_percent_full'
-        });
-
-        referenceTable['5451.Relay1'] = Object.assign(new MockReferencedValue(), {
-            _value: 'open',
-            _type: ValueType.String,
-            _dirty: false,
-            _deviceId: 5451,
-            _parameterName: 'Relay1'
-        });
-
-        referenceTable['5451.number'] = Object.assign(new MockReferencedValue(), {
-            _value: 10,
-            _type: ValueType.Number,
-            _dirty: false,
-            _deviceId: 5451,
-            _parameterName: 'number'
-        });
+        referencedValues = [
+            Object.assign(new MockReferencedValue(), {
+                _value: 50,
+                _type: ValueType.Number,
+                _dirty: false,
+                _deviceId: 5439,
+                _parameterName: 'lvl_measurement_percent_full'
+            }),
+            Object.assign(new MockReferencedValue(), {
+                _value: 'open',
+                _type: ValueType.String,
+                _dirty: false,
+                _deviceId: 5451,
+                _parameterName: 'Relay1'
+            }),
+            Object.assign(new MockReferencedValue(), {
+                _value: 10,
+                _type: ValueType.Number,
+                _dirty: false,
+                _deviceId: 5451,
+                _parameterName: 'number'
+            })
+        ];
 
         programs.noReferences = [
             {
@@ -259,6 +258,7 @@ describe('Test program', () => {
     describe('Test evaluate', () => {
         it('No references', () => {
             const program = new Program(programs.noReferences);
+            program.setReferencesTargets(referencedValues);
 
             const command = Object.assign(new Command({name: ''}), {
                 _commandId: 56,
@@ -274,6 +274,7 @@ describe('Test program', () => {
 
         it('Single reference', () => {
             const program = new Program(programs.singleReferenceInCondition);
+            program.setReferencesTargets(referencedValues);
 
             const command = Object.assign(new Command({name: ''}), {
                 _commandId: 56,
@@ -291,6 +292,7 @@ describe('Test program', () => {
 
         it('Two references', () => {
             const program = new Program(programs.twoReferences);
+            program.setReferencesTargets(referencedValues);
 
             const command = Object.assign(new Command({name: ''}), {
                 _commandId: 56,
@@ -306,6 +308,7 @@ describe('Test program', () => {
 
         it('Two references with write', () => {
             const program = new Program(programs.twoReferencesWithWrite);
+            program.setReferencesTargets(referencedValues);
 
             const command = Object.assign(new Command({name: ''}), {
                 _commandId: 56,
@@ -315,8 +318,9 @@ describe('Test program', () => {
                 name: `5451.56.open`
             });
 
+            const numberReference = referencedValues.find(value => value.referenceTarget === '5451.number');
             const reference = Object.assign(new MockReferencedValue(), {
-                ...referenceTable['5451.number'],
+                ...numberReference,
                 _value: 0,
                 _dirty: true
             });

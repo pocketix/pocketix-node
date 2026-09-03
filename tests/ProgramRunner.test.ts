@@ -3,7 +3,6 @@ import {ProgramRunner} from '../src/ProgramRunner';
 import {MockCommanderAndReferenceManager} from './MockCommanderAndReferenceManager';
 import {deepStrictEqual} from 'assert';
 import {Command} from '../src/Command';
-import {references} from '../src/Program';
 
 
 const programs = {
@@ -31,7 +30,6 @@ const commandClose = Object.assign(new Command({name: ''}), {
 
 describe('Test ProgramRunner', () => {
     beforeEach(() => {
-        references.length = 0;
         programs.noReferences = [
             {
                 name: 'fork',

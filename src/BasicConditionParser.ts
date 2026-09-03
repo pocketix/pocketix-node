@@ -18,6 +18,7 @@ import {
     Subtract,
     Year
 } from './Operators';
+import type {ReferenceRegistry} from './ReferenceRegistry';
 
 type ParsedNode =
     | { kind: 'literal'; value: string | number | boolean | null }
@@ -71,7 +72,10 @@ const REFERENCE_PLACEHOLDER_PREFIX = '__pxRef';
  * so one reference target being a substring of another can't corrupt the
  * result.
  */
-function extractReferences(raw: string): { rewritten: string; references: Map<string, Reference> } {
+function extractReferences(
+    raw: string,
+    registry: ReferenceRegistry
+): { rewritten: string; references: Map<string, Reference> } {
     const references = new Map<string, Reference>();
     let rewritten = '';
     let cursor = 0;
@@ -83,7 +87,7 @@ function extractReferences(raw: string): { rewritten: string; references: Map<st
     while ((match = REFERENCE_REGEX.exec(raw)) !== null) {
         const target = match[0];
         const placeholder = `${REFERENCE_PLACEHOLDER_PREFIX}${count++}`;
-        const ref = new Reference();
+        const ref = new Reference(registry);
         ref.initializeOperands([target]);
         references.set(placeholder, ref);
 
@@ -106,8 +110,8 @@ function extractReferences(raw: string): { rewritten: string; references: Map<st
 class BasicConditionParser {
     private references: Map<string, Reference> = new Map();
 
-    public parse(raw: string): { ast: ParsedNode; references: Reference[] } {
-        const {rewritten, references} = extractReferences(raw);
+    public parse(raw: string, registry: ReferenceRegistry): { ast: ParsedNode; references: Reference[] } {
+        const {rewritten, references} = extractReferences(raw, registry);
         this.references = references;
 
         let tree: jsep.Expression;

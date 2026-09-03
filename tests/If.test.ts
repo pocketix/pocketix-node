@@ -1,6 +1,7 @@
 import {deepStrictEqual, throws} from 'assert';
 import {If, IfBranch} from '../src/If';
 import {Command} from '../src/Command';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 
 
 describe('Test IF, IfBranch', () => {
@@ -16,7 +17,7 @@ describe('Test IF, IfBranch', () => {
                 ],
                 condition: '5451.Relay1 === \'open\''
             };
-            const block = new IfBranch(rawIf);
+            const block = new IfBranch(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.represent(), rawIf);
         });
@@ -32,7 +33,7 @@ describe('Test IF, IfBranch', () => {
                 condition: '5451.Relay1 === \'open\'',
                 name: undefined
             };
-            const block = new IfBranch(rawIf);
+            const block = new IfBranch(rawIf, new ReferenceRegistry());
 
             rawIf.name = 'elseif';
 
@@ -50,7 +51,7 @@ describe('Test IF, IfBranch', () => {
                 condition: '',
                 name: undefined
             };
-            const block = new IfBranch(rawIf);
+            const block = new IfBranch(rawIf, new ReferenceRegistry());
 
             rawIf.name = 'else';
 
@@ -68,7 +69,7 @@ describe('Test IF, IfBranch', () => {
                 condition: '',
                 name: undefined
             };
-            const block = new IfBranch(rawIf);
+            const block = new IfBranch(rawIf, new ReferenceRegistry());
             const command = new Command(rawIf.block[0]);
 
             deepStrictEqual(block.evaluate(), [command]);
@@ -85,7 +86,7 @@ describe('Test IF, IfBranch', () => {
                 condition: '1 > 0',
                 name: undefined
             };
-            const block = new IfBranch(rawIf);
+            const block = new IfBranch(rawIf, new ReferenceRegistry());
             const command = new Command(rawIf.block[0]);
 
             deepStrictEqual(block.evaluate(), [command]);
@@ -102,7 +103,7 @@ describe('Test IF, IfBranch', () => {
                 condition: '1 > 2',
                 name: undefined
             };
-            const block = new IfBranch(rawIf);
+            const block = new IfBranch(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), undefined);
         });
@@ -120,7 +121,7 @@ describe('Test IF, IfBranch', () => {
                 condition: '5451.Relay1 === \'open\'',
                 name: 'if'
             }];
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.represent(), rawIf);
         });
@@ -148,7 +149,7 @@ describe('Test IF, IfBranch', () => {
                     name: 'else'
                 }
             ];
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.represent(), rawIf);
         });
@@ -176,7 +177,7 @@ describe('Test IF, IfBranch', () => {
                     name: 'elseif'
                 }
             ];
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.represent(), rawIf);
         });
@@ -214,7 +215,7 @@ describe('Test IF, IfBranch', () => {
                     name: 'else'
                 }
             ];
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.represent(), rawIf);
         });
@@ -252,7 +253,7 @@ describe('Test IF, IfBranch', () => {
                     name: undefined
                 }
             ];
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             rawIf[0].name = 'if';
             rawIf[1].name = 'elseif';
@@ -264,7 +265,7 @@ describe('Test IF, IfBranch', () => {
         it('Tests empty If', () => {
             const rawIf = [];
 
-            throws(() => new If(rawIf), Error);
+            throws(() => new If(rawIf, new ReferenceRegistry()), Error);
         });
 
         it('Tests If evaluate If', () => {
@@ -281,7 +282,7 @@ describe('Test IF, IfBranch', () => {
                 },
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), [new Command(rawIf[0].block[0])]);
         });
@@ -300,7 +301,7 @@ describe('Test IF, IfBranch', () => {
                 },
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), undefined);
         });
@@ -329,7 +330,7 @@ describe('Test IF, IfBranch', () => {
                 },
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), [new Command(rawIf[0].block[0])]);
         });
@@ -358,7 +359,7 @@ describe('Test IF, IfBranch', () => {
                 },
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), [new Command(rawIf[1].block[0])]);
         });
@@ -396,7 +397,7 @@ describe('Test IF, IfBranch', () => {
                 }
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), [new Command(rawIf[0].block[0])]);
         });
@@ -434,7 +435,7 @@ describe('Test IF, IfBranch', () => {
                 }
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), [new Command(rawIf[1].block[0])]);
         });
@@ -472,7 +473,7 @@ describe('Test IF, IfBranch', () => {
                 }
             ];
 
-            const block = new If(rawIf);
+            const block = new If(rawIf, new ReferenceRegistry());
 
             deepStrictEqual(block.evaluate(), [new Command(rawIf[2].block[0])]);
         });

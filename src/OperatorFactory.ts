@@ -20,9 +20,10 @@ import {
     Value,
     Year
 } from "./Operators";
+import type {ReferenceRegistry} from './ReferenceRegistry';
 
 class OperatorFactory {
-    public create(raw: string | undefined): Operator | undefined {
+    public create(raw: string | undefined, registry: ReferenceRegistry): Operator | undefined {
         if (raw === undefined) {
             return undefined;
         }
@@ -51,7 +52,7 @@ class OperatorFactory {
             case Operators.Value:
                 return new Value();
             case Operators.Parameter:
-                return new Reference();
+                return new Reference(registry);
             case Operators.Minutes:
                 return new Minutes();
             case Operators.Hours:

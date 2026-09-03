@@ -14,7 +14,7 @@ import {
 } from '../src/Operators';
 import assert, {strictEqual} from 'assert';
 import {describe} from 'mocha';
-import {referenceTable} from '../src/Program';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 import {MockReferencedValue} from './MockReferencedValue';
 import {ValueType} from '../src/ValueType';
 
@@ -257,13 +257,14 @@ describe('Test operators', () => {
 
     describe('Test the Reference operator (parameter)', () => {
         it('Tests represent', () => {
-            const reference = new Reference();
+            const reference = new Reference(new ReferenceRegistry());
 
             strictEqual(reference.represent(), Operators.Parameter);
         });
 
         it('Test string value returned', () => {
-            const reference = new Reference();
+            const registry = new ReferenceRegistry();
+            const reference = new Reference(registry);
 
             reference.initializeOperands(['variable']);
 
@@ -275,13 +276,14 @@ describe('Test operators', () => {
                 _parameterName: 'string'
             };
 
-            referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
+            registry.referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
 
             strictEqual(reference.evaluate([]), referencedValue._value);
         });
 
         it('Test number value returned', () => {
-            const reference = new Reference();
+            const registry = new ReferenceRegistry();
+            const reference = new Reference(registry);
 
             reference.initializeOperands(['variable']);
 
@@ -293,13 +295,14 @@ describe('Test operators', () => {
                 _parameterName: 'string'
             };
 
-            referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
+            registry.referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
 
             strictEqual(reference.evaluate([]), referencedValue._value);
         });
 
         it('Test object value returned', () => {
-            const reference = new Reference();
+            const registry = new ReferenceRegistry();
+            const reference = new Reference(registry);
 
             reference.initializeOperands(['variable']);
 
@@ -311,7 +314,7 @@ describe('Test operators', () => {
                 _parameterName: 'string'
             };
 
-            referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
+            registry.referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
 
             strictEqual(reference.evaluate([]), referencedValue._value.value);
         });

@@ -1,5 +1,6 @@
 import {deepStrictEqual} from 'assert';
 import {Fork} from '../src/Fork';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 
 describe('Test fork', () => {
     it('Tests condition represent', () => {
@@ -19,7 +20,7 @@ describe('Test fork', () => {
             ],
             condition: ''
         };
-        const fork = new Fork(rawFork);
+        const fork = new Fork(rawFork, new ReferenceRegistry());
 
         deepStrictEqual(fork.represent(), rawFork);
     });

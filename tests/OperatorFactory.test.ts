@@ -22,12 +22,13 @@ import {
     Value,
     Year
 } from '../src/Operators';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 
 describe('Test OperatorFactory', () => {
     it('Test Operators.GreaterThan', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.GreaterThan);
+        const operator = operandFactory.create(Operators.GreaterThan, new ReferenceRegistry());
 
         strictEqual(operator instanceof GreaterThan, true);
     });
@@ -35,7 +36,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.GreaterOrEqualThan', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.GreaterOrEqualThan);
+        const operator = operandFactory.create(Operators.GreaterOrEqualThan, new ReferenceRegistry());
 
         strictEqual(operator instanceof GreaterOrEqualThan, true);
     });
@@ -43,7 +44,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.LessThan', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.LessThan);
+        const operator = operandFactory.create(Operators.LessThan, new ReferenceRegistry());
 
         strictEqual(operator instanceof LessThan, true);
     });
@@ -51,7 +52,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.LessOrEqualThan', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.LessOrEqualThan);
+        const operator = operandFactory.create(Operators.LessOrEqualThan, new ReferenceRegistry());
 
         strictEqual(operator instanceof LessOrEqualThan, true);
     });
@@ -60,7 +61,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Equal', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Equal);
+        const operator = operandFactory.create(Operators.Equal, new ReferenceRegistry());
 
         strictEqual(operator instanceof Equal, true);
     });
@@ -68,7 +69,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.NotEqual', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.NotEqual);
+        const operator = operandFactory.create(Operators.NotEqual, new ReferenceRegistry());
 
         strictEqual(operator instanceof NotEqual, true);
     });
@@ -76,7 +77,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Add', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Add);
+        const operator = operandFactory.create(Operators.Add, new ReferenceRegistry());
 
         strictEqual(operator instanceof Add, true);
     });
@@ -84,7 +85,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Subtract', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Subtract);
+        const operator = operandFactory.create(Operators.Subtract, new ReferenceRegistry());
 
         strictEqual(operator instanceof Subtract, true);
     });
@@ -92,7 +93,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Multiply', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Multiply);
+        const operator = operandFactory.create(Operators.Multiply, new ReferenceRegistry());
 
         strictEqual(operator instanceof Multiply, true);
     });
@@ -100,7 +101,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Divide', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Divide);
+        const operator = operandFactory.create(Operators.Divide, new ReferenceRegistry());
 
         strictEqual(operator instanceof Divide, true);
     });
@@ -108,7 +109,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Value', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Value);
+        const operator = operandFactory.create(Operators.Value, new ReferenceRegistry());
 
         strictEqual(operator instanceof Value, true);
     });
@@ -116,7 +117,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Parameter', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Parameter);
+        const operator = operandFactory.create(Operators.Parameter, new ReferenceRegistry());
 
         strictEqual(operator instanceof Reference, true);
     });
@@ -124,7 +125,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Minutes', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Minutes);
+        const operator = operandFactory.create(Operators.Minutes, new ReferenceRegistry());
 
         strictEqual(operator instanceof Minutes, true);
     });
@@ -132,7 +133,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Hours', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Hours);
+        const operator = operandFactory.create(Operators.Hours, new ReferenceRegistry());
 
         strictEqual(operator instanceof Hours, true);
     });
@@ -140,7 +141,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Day', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Day);
+        const operator = operandFactory.create(Operators.Day, new ReferenceRegistry());
 
         strictEqual(operator instanceof Day, true);
     });
@@ -148,7 +149,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Month', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Month);
+        const operator = operandFactory.create(Operators.Month, new ReferenceRegistry());
 
         strictEqual(operator instanceof Month, true);
     });
@@ -156,7 +157,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Year', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Year);
+        const operator = operandFactory.create(Operators.Year, new ReferenceRegistry());
 
         strictEqual(operator instanceof Year, true);
     });
@@ -164,7 +165,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.And', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.And);
+        const operator = operandFactory.create(Operators.And, new ReferenceRegistry());
 
         strictEqual(operator instanceof And, true);
     });
@@ -172,7 +173,7 @@ describe('Test OperatorFactory', () => {
     it('Test Operators.Or', () => {
         const operandFactory = new OperatorFactory();
 
-        const operator = operandFactory.create(Operators.Or);
+        const operator = operandFactory.create(Operators.Or, new ReferenceRegistry());
 
         strictEqual(operator instanceof Or, true);
     });

@@ -4,23 +4,20 @@ import {Block} from './Block';
 import {ReferencedValue} from './ReferencedValue';
 import {Reference} from './Operators';
 import {Command} from './Command';
-
-const references: Reference[] = [];
-const referenceTable: { [key: string]: ReferencedValue } = {};
+import {ReferenceRegistry} from './ReferenceRegistry';
 
 class Program implements IEvaluable, IRepresentable {
     private block: Block;
-    private readonly references: Reference[];
+    private readonly registry: ReferenceRegistry;
 
     constructor(program: object) {
+        this.registry = new ReferenceRegistry();
         // @ts-ignore
-        this.block = new Block(program.block);
-        this.references = [...references];
+        this.block = new Block(program.block, this.registry);
     }
 
     public getReferencesToLoad(): Reference[] {
-        console.log("references to load", JSON.stringify(this.references, null, 1));
-        return this.references.filter(
+        return this.registry.references.filter(
             (value, index, theRestOfReferences) =>
                 theRestOfReferences.findIndex(
                     v2 => (v2.referenceTarget === value.referenceTarget)
@@ -28,9 +25,9 @@ class Program implements IEvaluable, IRepresentable {
     }
 
     public setReferencesTargets(targets: ReferencedValue[]): void {
-        this.references.forEach(reference => {
+        this.registry.references.forEach(reference => {
             if (reference.referenceTarget) {
-                referenceTable[reference.referenceTarget] = targets.find(target =>
+                this.registry.referenceTable[reference.referenceTarget] = targets.find(target =>
                   target.referenceTarget === reference.referenceTarget
                 ) as ReferencedValue;
             }
@@ -38,7 +35,7 @@ class Program implements IEvaluable, IRepresentable {
     }
 
     public getReferencesToUpdate(): ReferencedValue[] {
-        return Object.values(referenceTable).filter(reference => reference.dirty);
+        return Object.values(this.registry.referenceTable).filter(reference => reference.dirty);
     }
 
     evaluate(): Command[] {
@@ -50,4 +47,4 @@ class Program implements IEvaluable, IRepresentable {
     }
 }
 
-export {Program, references, referenceTable};
+export {Program};

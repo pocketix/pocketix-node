@@ -1,6 +1,6 @@
 import {IRepresentable} from './IRepresentable';
-import {references, referenceTable} from './Program';
 import {ReferencedValue} from './ReferencedValue';
+import type {ReferenceRegistry} from './ReferenceRegistry';
 
 
 enum Operators {
@@ -218,15 +218,18 @@ class Reference extends Operator {
     }
 
     private get referenceFromReferenceTable(): ReferencedValue {
-        return referenceTable[this._referenceTarget];
+        return this.registry.referenceTable[this._referenceTarget];
     }
     private _referenceTarget: string;
-    constructor() {
+    private readonly registry: ReferenceRegistry;
+
+    constructor(registry: ReferenceRegistry) {
         super();
         this._operandCount = 1;
         this._operator = Operators.Parameter;
         this._referenceTarget = "";
-        references.push(this);
+        this.registry = registry;
+        this.registry.references.push(this);
     }
 
     public initializeOperands(operands: any[]): void {
