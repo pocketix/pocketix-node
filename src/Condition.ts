@@ -1,16 +1,16 @@
 import {IEvaluable} from './IEvaluable';
 import {IRepresentable} from './IRepresentable';
-import { Hours, Operator, Operators, Reference } from "./Operators";
+import {Operator, Operators} from "./Operators";
 import {isPrimitive, Operand, OperandFactory} from './OperandFactory';
 import {OperatorFactory} from './OperatorFactory';
+import {BasicConditionParser, evaluateBasicCondition, ParsedNode} from './BasicConditionParser';
 
 class Condition implements IEvaluable, IRepresentable {
-    private static REGEX = /(\w+\.\w+)/gm;
     private _operator: Operator | undefined;
     private _operands: Operand[] = [];
     private operatorFactory: OperatorFactory = new OperatorFactory();
     private operandFactory: OperandFactory = new OperandFactory();
-    private referencesForBasicCondition: Reference[] = [];
+    private parsedCondition?: ParsedNode;
     private readonly isBasicCondition: boolean;
     private raw?: string;
 
@@ -44,21 +44,7 @@ class Condition implements IEvaluable, IRepresentable {
             return
         }
 
-        let matches = Condition.REGEX.exec(this.raw);
-
-        while (matches !== null) {
-            if (matches.index === Condition.REGEX.lastIndex) {
-                Condition.REGEX.lastIndex++;
-            }
-
-            matches.forEach((match) => {
-                const ref = new Reference();
-                ref.initializeOperands([match]);
-                this.referencesForBasicCondition.push(ref);
-            });
-
-            matches = Condition.REGEX.exec(this.raw);
-        }
+        this.parsedCondition = new BasicConditionParser().parse(this.raw).ast;
     }
 
     get operands(): any[] {
@@ -79,12 +65,11 @@ class Condition implements IEvaluable, IRepresentable {
 
     evaluate(): any {
         if (this.isBasicCondition) {
-            let raw = this.raw || "";
-            this.referencesForBasicCondition.forEach(
-                reference => raw = raw.replace(reference.referenceTarget, JSON.stringify(reference.value))
-            );
-            raw = raw.split('hours(now)').join((new Hours()).evaluate(['now']));
-            return Function(`return ${raw}`)();
+            if (!this.parsedCondition) {
+                return undefined;
+            }
+
+            return evaluateBasicCondition(this.parsedCondition);
         }
 
         return this.operator.evaluate(this.operands.map(operand => isPrimitive(operand) ? operand : operand.evaluate()));

@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/pocketix/pocketix-node#readme",
   "dependencies": {
+    "jsep": "^1.4.0",
     "tslib": "^2.6.2"
   }
 }
