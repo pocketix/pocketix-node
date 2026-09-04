@@ -20,9 +20,9 @@ class CommandFactory {
             return new IfBranch(json, registry);
         }
 
-       /* if (json.hasOwnProperty('condition') && json.hasOwnProperty('block')) {
+        if (json.hasOwnProperty('name') && (json as any).name === 'while') {
             return new While(json, registry);
-        }*/
+        }
 
         if (json.hasOwnProperty('name') && json.hasOwnProperty('params')) {
             return new Command(json);
