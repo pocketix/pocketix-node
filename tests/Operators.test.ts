@@ -193,6 +193,12 @@ describe('Test operators', () => {
 
             strictEqual(add.evaluate([2, -2]), 0);
         });
+
+        it('Throws on a non-numeric operand', () => {
+            const add = new Add();
+
+            assert.throws(() => add.evaluate([2, 'open']), Error);
+        });
     });
 
     describe('Test the Subtract operator (-)', () => {
@@ -212,6 +218,12 @@ describe('Test operators', () => {
             const subtract = new Subtract();
 
             strictEqual(subtract.evaluate([2, -2]), 4);
+        });
+
+        it('Throws on a non-numeric operand', () => {
+            const subtract = new Subtract();
+
+            assert.throws(() => subtract.evaluate([2, 'open']), Error);
         });
     });
 
@@ -233,6 +245,12 @@ describe('Test operators', () => {
 
             strictEqual(multiply.evaluate([2, -2]), -4);
         });
+
+        it('Throws on a non-numeric operand', () => {
+            const multiply = new Multiply();
+
+            assert.throws(() => multiply.evaluate([2, 'open']), Error);
+        });
     });
 
     describe('Test the Divide operator (/)', () => {
@@ -252,6 +270,12 @@ describe('Test operators', () => {
             const divide = new Divide();
 
             assert.throws(() => divide.evaluate([2, 0]), Error);
+        });
+
+        it('Throws on a non-numeric operand', () => {
+            const divide = new Divide();
+
+            assert.throws(() => divide.evaluate([2, 'open']), Error);
         });
     });
 

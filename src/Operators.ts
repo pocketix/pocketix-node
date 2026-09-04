@@ -51,6 +51,16 @@ abstract class Operator implements IRepresentable {
     public represent(): Operators {
         return this._operator;
     }
+
+    protected toNumber(value: any): number {
+        const num = +value;
+
+        if (Number.isNaN(num)) {
+            throw new Error(`Cannot use non-numeric value "${value}" in an arithmetic operation`);
+        }
+
+        return num;
+    }
 }
 
 class LessThan extends Operator {
@@ -134,8 +144,8 @@ class Add extends Operator {
     }
 
     evaluate(operands: any[]): any {
-        const operand1 = +operands[0];
-        const operand2 = +operands[1];
+        const operand1 = this.toNumber(operands[0]);
+        const operand2 = this.toNumber(operands[1]);
 
         return operand1 + operand2;
     }
@@ -149,8 +159,8 @@ class Subtract extends Operator {
     }
 
     evaluate(operands: any[]): any {
-        const operand1 = +operands[0];
-        const operand2 = +operands[1];
+        const operand1 = this.toNumber(operands[0]);
+        const operand2 = this.toNumber(operands[1]);
 
         return operand1 - operand2;
     }
@@ -164,8 +174,8 @@ class Multiply extends Operator {
     }
 
     evaluate(operands: any[]): any {
-        const operand1 = +operands[0];
-        const operand2 = +operands[1];
+        const operand1 = this.toNumber(operands[0]);
+        const operand2 = this.toNumber(operands[1]);
 
         return operand1 * operand2;
     }
@@ -179,8 +189,8 @@ class Divide extends Operator {
     }
 
     evaluate(operands: any[]): any {
-        const operand1 = +operands[0];
-        const operand2 = +operands[1];
+        const operand1 = this.toNumber(operands[0]);
+        const operand2 = this.toNumber(operands[1]);
 
         if (operand2 === 0) {
             throw new Error('Division by zero');
