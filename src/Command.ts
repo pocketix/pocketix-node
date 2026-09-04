@@ -27,9 +27,21 @@ class Command implements IEvaluable, IRepresentable {
     constructor(raw: any) {
         this.name = raw.name;
         this._params = raw.params;
-        const [deviceId, commandId, commandValue] = this.name.split('.');
+
+        const parts = this.name.split('.');
+
+        if (parts.length !== 3) {
+            throw new Error(`Malformed command name "${this.name}" - expected "deviceId.commandId.commandValue"`);
+        }
+
+        const [deviceId, commandId, commandValue] = parts;
         this._deviceId = +deviceId;
         this._commandId = +commandId;
+
+        if (Number.isNaN(this._deviceId) || Number.isNaN(this._commandId)) {
+            throw new Error(`Malformed command name "${this.name}" - deviceId and commandId must be numeric`);
+        }
+
         this._commandValue = commandValue;
     }
 

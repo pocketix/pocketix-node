@@ -12,7 +12,7 @@ const programs: {[key: string]: any} = {
     twoReferencesWithWrite: undefined
 };
 
-const commandOpen = Object.assign(new Command({name: ''}), {
+const commandOpen = Object.assign(Object.create(Command.prototype), {
     _commandId: 56,
     _commandValue: 'open',
     _deviceId: 5451,
@@ -20,7 +20,7 @@ const commandOpen = Object.assign(new Command({name: ''}), {
     name: `5451.56.open`
 });
 
-const commandClose = Object.assign(new Command({name: ''}), {
+const commandClose = Object.assign(Object.create(Command.prototype), {
     _commandId: 56,
     _commandValue: 'close',
     _deviceId: 5451,

@@ -260,7 +260,7 @@ describe('Test program', () => {
             const program = new Program({block: programs.noReferences});
             program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: isBetweenHours ? 'close' : 'open',
                 _deviceId: 5451,
@@ -280,7 +280,7 @@ describe('Test program', () => {
             // "close" when between hours (the nested if's Relay1 === 'open'
             // is satisfied by the mock data) and "open" from the outer else
             // otherwise - never zero commands.
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: isBetweenHours ? 'close' : 'open',
                 _deviceId: 5451,
@@ -296,7 +296,7 @@ describe('Test program', () => {
             const program = new Program({block: programs.twoReferences});
             program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: 'open',
                 _deviceId: 5451,
@@ -312,7 +312,7 @@ describe('Test program', () => {
             const program = new Program({block: programs.twoReferencesWithWrite});
             program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: 'open',
                 _deviceId: 5451,
