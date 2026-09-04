@@ -27,9 +27,19 @@ class Program implements IEvaluable, IRepresentable {
     public setReferencesTargets(targets: ReferencedValue[]): void {
         this.registry.references.forEach(reference => {
             if (reference.referenceTarget) {
-                this.registry.referenceTable[reference.referenceTarget] = targets.find(target =>
+                const target = targets.find(target =>
                   target.referenceTarget === reference.referenceTarget
-                ) as ReferencedValue;
+                );
+
+                if (target) {
+                    // Copy rather than store the caller's object directly -
+                    // evaluating the program mutates .value/.dirty on
+                    // whatever ends up in referenceTable, and that must
+                    // never be the caller's own object (they may hold onto
+                    // it elsewhere, e.g. a shared device-state cache).
+                    const TargetConstructor = target.constructor as new () => ReferencedValue;
+                    this.registry.referenceTable[reference.referenceTarget] = Object.assign(new TargetConstructor(), target);
+                }
             }
         });
     }

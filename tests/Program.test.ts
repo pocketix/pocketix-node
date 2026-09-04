@@ -331,5 +331,20 @@ describe('Test program', () => {
             deepStrictEqual(program.getReferencesToUpdate(), [reference]);
         });
 
+        it('Does not mutate the caller-supplied ReferencedValue objects', () => {
+            const program = new Program({block: programs.twoReferencesWithWrite});
+            program.setReferencesTargets(referencedValues);
+
+            const originalNumberReference = referencedValues.find(value => value.referenceTarget === '5451.number') as MockReferencedValue;
+            const snapshotBeforeEvaluate = Object.assign(new MockReferencedValue(), originalNumberReference);
+
+            program.evaluate();
+
+            // The write inside the program must land on Program's own copy,
+            // never on the exact object the caller passed into
+            // setReferencesTargets().
+            deepStrictEqual(originalNumberReference, snapshotBeforeEvaluate);
+        });
+
     });
 });
