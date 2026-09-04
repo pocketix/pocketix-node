@@ -3,9 +3,10 @@ import {If, IfBranch} from './If';
 import {While} from './While';
 import {Write} from './Write';
 import {Fork} from './Fork';
+import {Switch} from './Switch';
 import type {ReferenceRegistry} from './ReferenceRegistry';
 
-type Commandable = (If | IfBranch | Fork | While | Command | Write);
+type Commandable = (If | IfBranch | Fork | Switch | While | Command | Write);
 class CommandFactory {
     create(json: object | Array<any>, registry: ReferenceRegistry): Commandable {
         if (Array.isArray(json)) {
@@ -14,6 +15,10 @@ class CommandFactory {
 
         if (json.hasOwnProperty('name') && (json as any).name === Fork.NAME) {
             return new Fork(json, registry);
+        }
+
+        if (json.hasOwnProperty('name') && (json as any).name === Switch.NAME) {
+            return new Switch(json, registry);
         }
 
         if (json.hasOwnProperty('name') && (json as any).name === 'if') {

@@ -19,6 +19,10 @@ class IfBranch implements IEvaluable, IRepresentable {
         return this.condition === undefined;
     }
 
+    public hasExplicitName(): boolean {
+        return !!this.name;
+    }
+
     public isTruthy(): any {
         return this.condition === undefined || this.condition.evaluate();
     }
@@ -65,7 +69,7 @@ class If implements IEvaluable, IRepresentable {
     public represent(): any {
         const conditions = this.conditions.map(condition => condition.represent());
 
-        if (conditions.length > 0 && !this.conditions[0].isElse()) {
+        if (conditions.length > 0 && !this.conditions[0].isElse() && !this.conditions[0].hasExplicitName()) {
             conditions[0].name = 'if';
         }
 

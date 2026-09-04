@@ -3,6 +3,7 @@ import {CommandFactory} from '../src/CommandFactory';
 import {strictEqual} from 'assert';
 import {If, IfBranch} from '../src/If';
 import {Fork} from '../src/Fork';
+import {Switch} from '../src/Switch';
 import {Command} from '../src/Command';
 import {Write} from '../src/Write';
 import {ReferenceRegistry} from '../src/ReferenceRegistry';
@@ -84,6 +85,29 @@ describe('Test commandFactory', () => {
             }, new ReferenceRegistry());
 
             strictEqual(result instanceof Fork, true);
+        });
+
+        it('Test Switch being created', () => {
+            const commandFactory = new CommandFactory();
+
+            const result = commandFactory.create({
+                name: 'switch',
+                block: [
+                    {
+                        name: 'case',
+                        block: [
+                            {
+                                name: '5451.56.close',
+                                params: []
+                            }
+                        ],
+                        condition: '5451.Relay1 === \'open\''
+                    }
+                ],
+                condition: ''
+            }, new ReferenceRegistry());
+
+            strictEqual(result instanceof Switch, true);
         });
 
         it('Test command created', () => {
