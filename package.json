@@ -1,5 +1,5 @@
 {
-  "name": "@pocketix/iotix-core",
+  "name": "@pocketix/iotix-node",
   "version": "1.0.0",
   "description": "A simple programming module for TypeScript",
   "main": "dist/index.js",
@@ -30,9 +30,9 @@
   "license": "MIT",
   "keywords": ["IoT", "VPL", "IoTiX"],
   "bugs": {
-	"url": "https://github.com/pocketix/iotix-core/issues"
+	"url": "https://github.com/pocketix/iotix-node/issues"
   },
-  "homepage": "https://github.com/pocketix/iotix-core#readme",
+  "homepage": "https://github.com/pocketix/iotix-node#readme",
   "dependencies": {
     "jsep": "^1.4.0",
     "tslib": "^2.6.2"
