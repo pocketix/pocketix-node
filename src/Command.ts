@@ -52,6 +52,11 @@ class Command implements IEvaluable, IRepresentable {
         };
     }
 
+    // Intentional: params are pre-resolved literal values, not expressions -
+    // neither editor's language schema offers expression syntax for command
+    // params (only plain string/array values), so there is nothing here to
+    // evaluate. Confirmed intent; do not change this to evaluate params as
+    // expressions without also adding editor support for it.
     evaluate(): any {
         return this;
     }
