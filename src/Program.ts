@@ -4,23 +4,20 @@ import {Block} from './Block';
 import {ReferencedValue} from './ReferencedValue';
 import {Reference} from './Operators';
 import {Command} from './Command';
-
-const references: Reference[] = [];
-const referenceTable: { [key: string]: ReferencedValue } = {};
+import {ReferenceRegistry} from './ReferenceRegistry';
 
 class Program implements IEvaluable, IRepresentable {
     private block: Block;
-    private readonly references: Reference[];
+    private readonly registry: ReferenceRegistry;
 
     constructor(program: object) {
+        this.registry = new ReferenceRegistry();
         // @ts-ignore
-        this.block = new Block(program.block);
-        this.references = [...references];
+        this.block = new Block(program.block, this.registry);
     }
 
     public getReferencesToLoad(): Reference[] {
-        console.log("references to load", JSON.stringify(this.references, null, 1));
-        return this.references.filter(
+        return this.registry.references.filter(
             (value, index, theRestOfReferences) =>
                 theRestOfReferences.findIndex(
                     v2 => (v2.referenceTarget === value.referenceTarget)
@@ -28,17 +25,27 @@ class Program implements IEvaluable, IRepresentable {
     }
 
     public setReferencesTargets(targets: ReferencedValue[]): void {
-        this.references.forEach(reference => {
+        this.registry.references.forEach(reference => {
             if (reference.referenceTarget) {
-                referenceTable[reference.referenceTarget] = targets.find(target =>
+                const target = targets.find(target =>
                   target.referenceTarget === reference.referenceTarget
-                ) as ReferencedValue;
+                );
+
+                if (target) {
+                    // Copy rather than store the caller's object directly -
+                    // evaluating the program mutates .value/.dirty on
+                    // whatever ends up in referenceTable, and that must
+                    // never be the caller's own object (they may hold onto
+                    // it elsewhere, e.g. a shared device-state cache).
+                    const TargetConstructor = target.constructor as new () => ReferencedValue;
+                    this.registry.referenceTable[reference.referenceTarget] = Object.assign(new TargetConstructor(), target);
+                }
             }
         });
     }
 
     public getReferencesToUpdate(): ReferencedValue[] {
-        return Object.values(referenceTable).filter(reference => reference.dirty);
+        return Object.values(this.registry.referenceTable).filter(reference => reference.dirty);
     }
 
     evaluate(): Command[] {
@@ -50,4 +57,4 @@ class Program implements IEvaluable, IRepresentable {
     }
 }
 
-export {Program, references, referenceTable};
+export {Program};

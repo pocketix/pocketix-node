@@ -1,10 +1,10 @@
-import {Program, references, referenceTable} from '../src/Program';
+import {Program} from '../src/Program';
 import {deepStrictEqual} from 'assert';
 import {ValueType} from '../src/ValueType';
 import {MockReferencedValue} from './MockReferencedValue';
 import {Command} from '../src/Command';
 
-const programs = {
+const programs: {[key: string]: any} = {
     noReferences: undefined,
     singleReferenceInCondition: undefined,
     twoReferences: undefined,
@@ -12,34 +12,33 @@ const programs = {
 };
 
 let isBetweenHours = false;
+let referencedValues: MockReferencedValue[] = [];
 
 describe('Test program', () => {
     beforeEach(() => {
-        references.length = 0;
-
-        referenceTable['5439.lvl_measurement_percent_full'] = Object.assign(new MockReferencedValue(), {
-            _value: 50,
-            _type: ValueType.Number,
-            _dirty: false,
-            _deviceId: 5439,
-            _parameterName: 'lvl_measurement_percent_full'
-        });
-
-        referenceTable['5451.Relay1'] = Object.assign(new MockReferencedValue(), {
-            _value: 'open',
-            _type: ValueType.String,
-            _dirty: false,
-            _deviceId: 5451,
-            _parameterName: 'Relay1'
-        });
-
-        referenceTable['5451.number'] = Object.assign(new MockReferencedValue(), {
-            _value: 10,
-            _type: ValueType.Number,
-            _dirty: false,
-            _deviceId: 5451,
-            _parameterName: 'number'
-        });
+        referencedValues = [
+            Object.assign(new MockReferencedValue(), {
+                _value: 50,
+                _type: ValueType.Number,
+                _dirty: false,
+                _deviceId: 5439,
+                _parameterName: 'lvl_measurement_percent_full'
+            }),
+            Object.assign(new MockReferencedValue(), {
+                _value: 'open',
+                _type: ValueType.String,
+                _dirty: false,
+                _deviceId: 5451,
+                _parameterName: 'Relay1'
+            }),
+            Object.assign(new MockReferencedValue(), {
+                _value: 10,
+                _type: ValueType.Number,
+                _dirty: false,
+                _deviceId: 5451,
+                _parameterName: 'number'
+            })
+        ];
 
         programs.noReferences = [
             {
@@ -189,25 +188,25 @@ describe('Test program', () => {
 
     describe('Test represent', () => {
         it('No references', () => {
-            const program = new Program(programs.noReferences);
+            const program = new Program({block: programs.noReferences});
 
             deepStrictEqual(program.represent(), programs.noReferences);
         });
 
         it('Single reference', () => {
-            const program = new Program(programs.singleReferenceInCondition);
+            const program = new Program({block: programs.singleReferenceInCondition});
 
             deepStrictEqual(program.represent(), programs.singleReferenceInCondition);
         });
 
         it('Two references', () => {
-            const program = new Program(programs.twoReferences);
+            const program = new Program({block: programs.twoReferences});
 
             deepStrictEqual(program.represent(), programs.twoReferences);
         });
 
         it('Two references with write', () => {
-            const program = new Program(programs.twoReferencesWithWrite);
+            const program = new Program({block: programs.twoReferencesWithWrite});
 
             deepStrictEqual(program.represent(), programs.twoReferencesWithWrite);
         });
@@ -215,7 +214,7 @@ describe('Test program', () => {
 
     describe('Test references loading', () => {
         it('No references', () => {
-            const program = new Program(programs.noReferences);
+            const program = new Program({block: programs.noReferences});
 
             const referencesToLoad = program.getReferencesToLoad().map(item => item.referenceTarget);
 
@@ -223,7 +222,7 @@ describe('Test program', () => {
         });
 
         it('Single reference', () => {
-            const program = new Program(programs.singleReferenceInCondition);
+            const program = new Program({block: programs.singleReferenceInCondition});
 
             const referencesToLoad = program.getReferencesToLoad().map(item => item.referenceTarget);
 
@@ -233,7 +232,7 @@ describe('Test program', () => {
         });
 
         it('Two references', () => {
-            const program = new Program(programs.twoReferences);
+            const program = new Program({block: programs.twoReferences});
 
             const referencesToLoad = program.getReferencesToLoad().map(item => item.referenceTarget);
 
@@ -244,7 +243,7 @@ describe('Test program', () => {
         });
 
         it('Three references', () => {
-            const program = new Program(programs.twoReferencesWithWrite);
+            const program = new Program({block: programs.twoReferencesWithWrite});
 
             const referencesToLoad = program.getReferencesToLoad().map(item => item.referenceTarget);
 
@@ -258,9 +257,10 @@ describe('Test program', () => {
 
     describe('Test evaluate', () => {
         it('No references', () => {
-            const program = new Program(programs.noReferences);
+            const program = new Program({block: programs.noReferences});
+            program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: isBetweenHours ? 'close' : 'open',
                 _deviceId: 5451,
@@ -273,26 +273,30 @@ describe('Test program', () => {
         });
 
         it('Single reference', () => {
-            const program = new Program(programs.singleReferenceInCondition);
+            const program = new Program({block: programs.singleReferenceInCondition});
+            program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            // The fork's outer if/else always produces exactly one command:
+            // "close" when between hours (the nested if's Relay1 === 'open'
+            // is satisfied by the mock data) and "open" from the outer else
+            // otherwise - never zero commands.
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
-                _commandValue: 'close',
+                _commandValue: isBetweenHours ? 'close' : 'open',
                 _deviceId: 5451,
                 _params: [],
-                name: `5451.56.close`
+                name: `5451.56.${isBetweenHours ? 'close' : 'open'}`
             });
 
-            const expected = isBetweenHours ? [command] : [];
-
-            deepStrictEqual(program.evaluate(), expected);
+            deepStrictEqual(program.evaluate(), [command]);
             deepStrictEqual(program.getReferencesToUpdate(), []);
         });
 
         it('Two references', () => {
-            const program = new Program(programs.twoReferences);
+            const program = new Program({block: programs.twoReferences});
+            program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: 'open',
                 _deviceId: 5451,
@@ -305,9 +309,10 @@ describe('Test program', () => {
         });
 
         it('Two references with write', () => {
-            const program = new Program(programs.twoReferencesWithWrite);
+            const program = new Program({block: programs.twoReferencesWithWrite});
+            program.setReferencesTargets(referencedValues);
 
-            const command = Object.assign(new Command({name: ''}), {
+            const command = Object.assign(Object.create(Command.prototype), {
                 _commandId: 56,
                 _commandValue: 'open',
                 _deviceId: 5451,
@@ -315,14 +320,30 @@ describe('Test program', () => {
                 name: `5451.56.open`
             });
 
+            const numberReference = referencedValues.find(value => value.referenceTarget === '5451.number');
             const reference = Object.assign(new MockReferencedValue(), {
-                ...referenceTable['5451.number'],
+                ...numberReference,
                 _value: 0,
                 _dirty: true
             });
 
             deepStrictEqual(program.evaluate(), [command]);
             deepStrictEqual(program.getReferencesToUpdate(), [reference]);
+        });
+
+        it('Does not mutate the caller-supplied ReferencedValue objects', () => {
+            const program = new Program({block: programs.twoReferencesWithWrite});
+            program.setReferencesTargets(referencedValues);
+
+            const originalNumberReference = referencedValues.find(value => value.referenceTarget === '5451.number') as MockReferencedValue;
+            const snapshotBeforeEvaluate = Object.assign(new MockReferencedValue(), originalNumberReference);
+
+            program.evaluate();
+
+            // The write inside the program must land on Program's own copy,
+            // never on the exact object the caller passed into
+            // setReferencesTargets().
+            deepStrictEqual(originalNumberReference, snapshotBeforeEvaluate);
         });
 
     });

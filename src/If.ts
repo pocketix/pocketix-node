@@ -2,20 +2,25 @@ import {IEvaluable} from './IEvaluable';
 import {IRepresentable} from './IRepresentable';
 import {Condition} from './Condition';
 import {Block} from './Block';
+import type {ReferenceRegistry} from './ReferenceRegistry';
 
 class IfBranch implements IEvaluable, IRepresentable {
     private condition?: Condition;
     private block: Block;
     private readonly name: string;
 
-    constructor(item: any) {
-        this.condition = item.condition ? new Condition(item.condition) : undefined;
+    constructor(item: any, registry: ReferenceRegistry) {
+        this.condition = item.condition ? new Condition(item.condition, registry) : undefined;
         this.name = item?.name;
-        this.block = new Block(item.block);
+        this.block = new Block(item.block, registry);
     }
 
     public isElse(): boolean {
         return this.condition === undefined;
+    }
+
+    public hasExplicitName(): boolean {
+        return !!this.name;
     }
 
     public isTruthy(): any {
@@ -46,8 +51,8 @@ class IfBranch implements IEvaluable, IRepresentable {
 class If implements IEvaluable, IRepresentable {
     private conditions: IfBranch[];
 
-    constructor(raw: object[]) {
-        this.conditions = raw.map(item => new IfBranch(item));
+    constructor(raw: object[], registry: ReferenceRegistry) {
+        this.conditions = raw.map(item => new IfBranch(item, registry));
 
         if (!this.conditions.length) {
             throw Error('No If branches');
@@ -56,7 +61,7 @@ class If implements IEvaluable, IRepresentable {
         let elseCount = 0;
         this.conditions.forEach(condition => elseCount += +condition.isElse());
 
-        if (elseCount - 1 > 1) {
+        if (elseCount > 1) {
             throw Error('Too many else branches');
         }
     }
@@ -64,7 +69,7 @@ class If implements IEvaluable, IRepresentable {
     public represent(): any {
         const conditions = this.conditions.map(condition => condition.represent());
 
-        if (conditions.length > 0) {
+        if (conditions.length > 0 && !this.conditions[0].isElse() && !this.conditions[0].hasExplicitName()) {
             conditions[0].name = 'if';
         }
 

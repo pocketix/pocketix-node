@@ -14,7 +14,7 @@ import {
 } from '../src/Operators';
 import assert, {strictEqual} from 'assert';
 import {describe} from 'mocha';
-import {referenceTable} from '../src/Program';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 import {MockReferencedValue} from './MockReferencedValue';
 import {ValueType} from '../src/ValueType';
 
@@ -193,6 +193,12 @@ describe('Test operators', () => {
 
             strictEqual(add.evaluate([2, -2]), 0);
         });
+
+        it('Throws on a non-numeric operand', () => {
+            const add = new Add();
+
+            assert.throws(() => add.evaluate([2, 'open']), Error);
+        });
     });
 
     describe('Test the Subtract operator (-)', () => {
@@ -212,6 +218,12 @@ describe('Test operators', () => {
             const subtract = new Subtract();
 
             strictEqual(subtract.evaluate([2, -2]), 4);
+        });
+
+        it('Throws on a non-numeric operand', () => {
+            const subtract = new Subtract();
+
+            assert.throws(() => subtract.evaluate([2, 'open']), Error);
         });
     });
 
@@ -233,6 +245,12 @@ describe('Test operators', () => {
 
             strictEqual(multiply.evaluate([2, -2]), -4);
         });
+
+        it('Throws on a non-numeric operand', () => {
+            const multiply = new Multiply();
+
+            assert.throws(() => multiply.evaluate([2, 'open']), Error);
+        });
     });
 
     describe('Test the Divide operator (/)', () => {
@@ -253,17 +271,24 @@ describe('Test operators', () => {
 
             assert.throws(() => divide.evaluate([2, 0]), Error);
         });
+
+        it('Throws on a non-numeric operand', () => {
+            const divide = new Divide();
+
+            assert.throws(() => divide.evaluate([2, 'open']), Error);
+        });
     });
 
     describe('Test the Reference operator (parameter)', () => {
         it('Tests represent', () => {
-            const reference = new Reference();
+            const reference = new Reference(new ReferenceRegistry());
 
             strictEqual(reference.represent(), Operators.Parameter);
         });
 
         it('Test string value returned', () => {
-            const reference = new Reference();
+            const registry = new ReferenceRegistry();
+            const reference = new Reference(registry);
 
             reference.initializeOperands(['variable']);
 
@@ -275,13 +300,14 @@ describe('Test operators', () => {
                 _parameterName: 'string'
             };
 
-            referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
+            registry.referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
 
             strictEqual(reference.evaluate([]), referencedValue._value);
         });
 
         it('Test number value returned', () => {
-            const reference = new Reference();
+            const registry = new ReferenceRegistry();
+            const reference = new Reference(registry);
 
             reference.initializeOperands(['variable']);
 
@@ -293,13 +319,14 @@ describe('Test operators', () => {
                 _parameterName: 'string'
             };
 
-            referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
+            registry.referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
 
             strictEqual(reference.evaluate([]), referencedValue._value);
         });
 
         it('Test object value returned', () => {
-            const reference = new Reference();
+            const registry = new ReferenceRegistry();
+            const reference = new Reference(registry);
 
             reference.initializeOperands(['variable']);
 
@@ -311,7 +338,7 @@ describe('Test operators', () => {
                 _parameterName: 'string'
             };
 
-            referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
+            registry.referenceTable.variable = Object.assign(new MockReferencedValue(), referencedValue);
 
             strictEqual(reference.evaluate([]), referencedValue._value.value);
         });

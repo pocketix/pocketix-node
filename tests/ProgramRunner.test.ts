@@ -3,17 +3,16 @@ import {ProgramRunner} from '../src/ProgramRunner';
 import {MockCommanderAndReferenceManager} from './MockCommanderAndReferenceManager';
 import {deepStrictEqual} from 'assert';
 import {Command} from '../src/Command';
-import {references} from '../src/Program';
 
 
-const programs = {
+const programs: {[key: string]: any} = {
     noReferences: undefined,
     singleReferenceInCondition: undefined,
     twoReferences: undefined,
     twoReferencesWithWrite: undefined
 };
 
-const commandOpen = Object.assign(new Command({name: ''}), {
+const commandOpen = Object.assign(Object.create(Command.prototype), {
     _commandId: 56,
     _commandValue: 'open',
     _deviceId: 5451,
@@ -21,7 +20,7 @@ const commandOpen = Object.assign(new Command({name: ''}), {
     name: `5451.56.open`
 });
 
-const commandClose = Object.assign(new Command({name: ''}), {
+const commandClose = Object.assign(Object.create(Command.prototype), {
     _commandId: 56,
     _commandValue: 'close',
     _deviceId: 5451,
@@ -29,9 +28,13 @@ const commandClose = Object.assign(new Command({name: ''}), {
     name: `5451.56.close`
 });
 
+let isBetweenHours = false;
+
 describe('Test ProgramRunner', () => {
     beforeEach(() => {
-        references.length = 0;
+        const hours = (new Date()).getHours();
+        isBetweenHours = hours > 14 && hours < 23;
+
         programs.noReferences = [
             {
                 name: 'fork',
@@ -182,7 +185,7 @@ describe('Test ProgramRunner', () => {
         programRunner.commander = mockCommanderAndReferenceManager;
         programRunner.referenceManager = mockCommanderAndReferenceManager;
 
-        programRunner.parseProgram(programs.noReferences);
+        programRunner.parseProgram({block: programs.noReferences});
 
         deepStrictEqual(programRunner.represent(), programs.noReferences);
     });
@@ -193,12 +196,12 @@ describe('Test ProgramRunner', () => {
 
         programRunner.commander = mockCommanderAndReferenceManager;
         programRunner.referenceManager = mockCommanderAndReferenceManager;
-        programRunner.parseProgram(programs.noReferences);
+        programRunner.parseProgram({block: programs.noReferences});
 
         await programRunner.run(false);
 
         deepStrictEqual(mockCommanderAndReferenceManager.dry, false);
-        deepStrictEqual(mockCommanderAndReferenceManager.sendCommandsCalledWithCommands, [commandClose]);
+        deepStrictEqual(mockCommanderAndReferenceManager.sendCommandsCalledWithCommands, [isBetweenHours ? commandClose : commandOpen]);
         deepStrictEqual(mockCommanderAndReferenceManager.referencesLoaded, [
         ]);
     });
@@ -209,12 +212,12 @@ describe('Test ProgramRunner', () => {
 
         programRunner.commander = mockCommanderAndReferenceManager;
         programRunner.referenceManager = mockCommanderAndReferenceManager;
-        programRunner.parseProgram(programs.singleReferenceInCondition);
+        programRunner.parseProgram({block: programs.singleReferenceInCondition});
 
         await programRunner.run(false);
 
         deepStrictEqual(mockCommanderAndReferenceManager.dry, false);
-        deepStrictEqual(mockCommanderAndReferenceManager.sendCommandsCalledWithCommands, [commandClose]);
+        deepStrictEqual(mockCommanderAndReferenceManager.sendCommandsCalledWithCommands, [isBetweenHours ? commandClose : commandOpen]);
         deepStrictEqual(mockCommanderAndReferenceManager.referencesLoaded, [
             '5451.Relay1'
         ]);
@@ -226,7 +229,7 @@ describe('Test ProgramRunner', () => {
 
         programRunner.commander = mockCommanderAndReferenceManager;
         programRunner.referenceManager = mockCommanderAndReferenceManager;
-        programRunner.parseProgram(programs.twoReferences);
+        programRunner.parseProgram({block: programs.twoReferences});
 
         await programRunner.run(false);
 
@@ -244,7 +247,7 @@ describe('Test ProgramRunner', () => {
 
         programRunner.commander = mockCommanderAndReferenceManager;
         programRunner.referenceManager = mockCommanderAndReferenceManager;
-        programRunner.parseProgram(programs.twoReferencesWithWrite);
+        programRunner.parseProgram({block: programs.twoReferencesWithWrite});
 
         await programRunner.run(false);
 
@@ -263,7 +266,7 @@ describe('Test ProgramRunner', () => {
 
         programRunner.commander = mockCommanderAndReferenceManager;
         programRunner.referenceManager = mockCommanderAndReferenceManager;
-        programRunner.parseProgram(programs.twoReferencesWithWrite);
+        programRunner.parseProgram({block: programs.twoReferencesWithWrite});
 
         await programRunner.run(true);
 

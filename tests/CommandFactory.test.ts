@@ -3,8 +3,10 @@ import {CommandFactory} from '../src/CommandFactory';
 import {strictEqual} from 'assert';
 import {If, IfBranch} from '../src/If';
 import {Fork} from '../src/Fork';
+import {Switch} from '../src/Switch';
 import {Command} from '../src/Command';
 import {Write} from '../src/Write';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 
 describe('Test commandFactory', () => {
     describe('Test correct commandable being created', () => {
@@ -20,7 +22,7 @@ describe('Test commandFactory', () => {
                     }
                 ],
                 condition: '5451.Relay1 === \'open\''
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof IfBranch, true);
         });
@@ -39,7 +41,7 @@ describe('Test commandFactory', () => {
                     ],
                     condition: '5451.Relay1 === \'open\''
                 }
-            ]);
+            ], new ReferenceRegistry());
 
             strictEqual(result instanceof If, true);
         });
@@ -57,7 +59,7 @@ describe('Test commandFactory', () => {
                     ],
                     condition: '5451.Relay1 === \'open\''
                 }
-            ]);
+            ], new ReferenceRegistry());
 
             strictEqual(result instanceof If, true);
         });
@@ -80,9 +82,32 @@ describe('Test commandFactory', () => {
                     }
                 ],
                 condition: ''
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof Fork, true);
+        });
+
+        it('Test Switch being created', () => {
+            const commandFactory = new CommandFactory();
+
+            const result = commandFactory.create({
+                name: 'switch',
+                block: [
+                    {
+                        name: 'case',
+                        block: [
+                            {
+                                name: '5451.56.close',
+                                params: []
+                            }
+                        ],
+                        condition: '5451.Relay1 === \'open\''
+                    }
+                ],
+                condition: ''
+            }, new ReferenceRegistry());
+
+            strictEqual(result instanceof Switch, true);
         });
 
         it('Test command created', () => {
@@ -91,7 +116,7 @@ describe('Test commandFactory', () => {
             const result = commandFactory.create({
                 name: '5451.56.close',
                 params: []
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof Command, true);
         });
@@ -102,7 +127,7 @@ describe('Test commandFactory', () => {
             const result = commandFactory.create({
                 reference: '5451.56',
                 value: '10'
-            });
+            }, new ReferenceRegistry());
 
             strictEqual(result instanceof Write, true);
         });

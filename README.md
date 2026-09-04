@@ -1,13 +1,13 @@
-# **Pocketix Node**
-A backend module for interpreting and executing Pocketix V1 automation scripts — designed for smart devices and IoT integrations.
+# **IoTiX Node**
+A backend module for interpreting and executing IoTiX V1 automation scripts — designed for smart devices and IoT integrations.
 
 ## **Overview**
-**Pocketix Node** is an interpret for the Pocketix v1 ecosystem. It allows programs written in the Pocketix V1 visual programming language to be evaluated, interpreted, and transformed into actionable commands for downstream smart devices.
+**IoTiX Node** is an interpret for the IoTiX v1 ecosystem. It allows programs written in the IoTiX V1 visual programming language to be evaluated, interpreted, and transformed into actionable commands for downstream smart devices.
 
 The module provides interfaces and abstract classes to connect automation logic with real-world device layers, without directly triggering hardware actions — making it ideal for simulation, testing, and safe validation.
 
 ## **Features**
-✅ Evaluates Pocketix V1 programs into commands and device state updates  
+✅ Evaluates IoTiX V1 programs into commands and device state updates  
 ✅ Does not directly interact with hardware — supports dry-run simulations  
 ✅ Plug-in architecture via interfaces: define your own commander and reference system  
 ✅ Easily extendable for custom gateways, validation logic, or IoT orchestration
@@ -47,10 +47,10 @@ npm run test
 ```
 
 ## **Related Projects**
-- 🔗 [vpl-for-things](https://github.com/pocketix/vpl-for-things) — WIP version of new editor built in Lit compatible with Pocketix v2 language
-- 🔗 [pocketix-react](https://github.com/pocketix/pocketix-react) — React-based scripting editor for the same ecosystem
-- 🔗 [pocketixng](https://github.com/pocketix/pocketixng) — Angular-based scripting editor for the same ecosystem
-- 🔗 [Pocketix Node Core](https://github.com/pocketix/pocketix-node-core) — A simple environment for basic IoT management
+- 🔗 [vpl-for-things](https://github.com/pocketix/vpl-for-things) — WIP version of new editor built in Lit compatible with IoTiX v2 language
+- 🔗 [iotix-react](https://github.com/pocketix/iotix-react) — React-based scripting editor for the same ecosystem
+- 🔗 [iotixng](https://github.com/pocketix/iotixng) — Angular-based scripting editor for the same ecosystem
+- 🔗 [Pocketix Node Core](https://github.com/pocketix/pocketix-node-core) — A simple environment for basic IoT management (unrelated project, not part of this rename)
 
 ## **Contributing**
 We welcome contributions! To get involved:

@@ -1,5 +1,6 @@
 import {deepStrictEqual, throws} from 'assert';
 import {Block} from '../src/Block';
+import {ReferenceRegistry} from '../src/ReferenceRegistry';
 
 describe('Test block', () => {
     it('Tests condition represent', () => {
@@ -9,14 +10,14 @@ describe('Test block', () => {
                 params: []
             }
         ];
-        const block = new Block(rawBlock);
+        const block = new Block(rawBlock, new ReferenceRegistry());
 
         deepStrictEqual(block.represent(), rawBlock);
     });
 
     it('Should fail on empty block', () => {
-        const rawBlock = [];
+        const rawBlock: any[] = [];
 
-        throws(() => new Block(rawBlock), Error);
+        throws(() => new Block(rawBlock, new ReferenceRegistry()), Error);
     });
 });
