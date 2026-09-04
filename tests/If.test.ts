@@ -287,6 +287,24 @@ describe('Test IF, IfBranch', () => {
             new If(rawIf, new ReferenceRegistry());
         });
 
+        it('Tests represent does not rename a first branch that is actually an else', () => {
+            // Malformed/unusual ordering: an else branch listed first,
+            // followed by a real conditional branch. Doesn't throw (only
+            // one else branch total), but represent() must not force-label
+            // the else branch as 'if' just because it's first in the array.
+            const rawIf = [
+                {block: [{name: '5451.56.close', params: []}], condition: '', name: undefined},
+                {block: [{name: '5451.56.open', params: []}], condition: '1 === 1', name: undefined}
+            ];
+
+            const block = new If(rawIf, new ReferenceRegistry());
+
+            deepStrictEqual(block.represent(), [
+                {name: 'else', condition: '', block: [{name: '5451.56.close', params: []}]},
+                {name: 'elseif', condition: '1 === 1', block: [{name: '5451.56.open', params: []}]}
+            ]);
+        });
+
         it('Tests If evaluate If', () => {
             const rawIf = [
                 {

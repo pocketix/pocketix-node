@@ -65,7 +65,7 @@ class If implements IEvaluable, IRepresentable {
     public represent(): any {
         const conditions = this.conditions.map(condition => condition.represent());
 
-        if (conditions.length > 0) {
+        if (conditions.length > 0 && !this.conditions[0].isElse()) {
             conditions[0].name = 'if';
         }
 
