@@ -16,7 +16,7 @@ describe('Test block', () => {
     });
 
     it('Should fail on empty block', () => {
-        const rawBlock = [];
+        const rawBlock: any[] = [];
 
         throws(() => new Block(rawBlock, new ReferenceRegistry()), Error);
     });

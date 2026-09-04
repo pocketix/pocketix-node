@@ -31,7 +31,7 @@ describe('Test IF, IfBranch', () => {
                     }
                 ],
                 condition: '5451.Relay1 === \'open\'',
-                name: undefined
+                name: undefined as string | undefined
             };
             const block = new IfBranch(rawIf, new ReferenceRegistry());
 
@@ -49,7 +49,7 @@ describe('Test IF, IfBranch', () => {
                     }
                 ],
                 condition: '',
-                name: undefined
+                name: undefined as string | undefined
             };
             const block = new IfBranch(rawIf, new ReferenceRegistry());
 
@@ -230,7 +230,7 @@ describe('Test IF, IfBranch', () => {
                         }
                     ],
                     condition: '5451.Relay1 === \'open\'',
-                    name: undefined
+                    name: undefined as string | undefined
                 },
                 {
                     block: [
@@ -240,7 +240,7 @@ describe('Test IF, IfBranch', () => {
                         }
                     ],
                     condition: '5451.Relay1 === \'open\'',
-                    name: undefined
+                    name: undefined as string | undefined
                 },
                 {
                     block: [
@@ -250,7 +250,7 @@ describe('Test IF, IfBranch', () => {
                         }
                     ],
                     condition: '',
-                    name: undefined
+                    name: undefined as string | undefined
                 }
             ];
             const block = new If(rawIf, new ReferenceRegistry());
@@ -263,7 +263,7 @@ describe('Test IF, IfBranch', () => {
         });
 
         it('Tests empty If', () => {
-            const rawIf = [];
+            const rawIf: any[] = [];
 
             throws(() => new If(rawIf, new ReferenceRegistry()), Error);
         });

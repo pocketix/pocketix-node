@@ -6,18 +6,18 @@ import {MockReferencedValue} from './MockReferencedValue';
 import {ValueType} from '../src/ValueType';
 
 class MockCommanderAndReferenceManager implements IReferenceManager, ICommander {
-    sendCommandsCalledWithCommands: Command[];
-    dry: boolean;
+    sendCommandsCalledWithCommands: Command[] = [];
+    dry: boolean = false;
     referencesLoaded: string[] = [];
     referencedValuesStored: string[] = [];
 
     sendCommands(dry: boolean, commands: Command[]): Promise<void> {
         this.dry = dry;
         this.sendCommandsCalledWithCommands = commands;
-        return;
+        return Promise.resolve();
     }
     async load(references: ReferencedValueItemsAsObject[]): Promise<ReferencedValue[]> {
-        const referencesToLoadFrom = {
+        const referencesToLoadFrom: {[key: string]: ReferencedValue} = {
             '5439.lvl_measurement_percent_full': Object.assign(new MockReferencedValue(), {
                 _value: 50,
                 _type: ValueType.Number,
@@ -51,7 +51,7 @@ class MockCommanderAndReferenceManager implements IReferenceManager, ICommander 
     }
     store(referencedValues: ReferencedValue[]): Promise<void> {
         this.referencedValuesStored = referencedValues.map(reference => reference.referenceTarget);
-        return;
+        return Promise.resolve();
     }
 
 }
