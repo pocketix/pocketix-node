@@ -268,6 +268,25 @@ describe('Test IF, IfBranch', () => {
             throws(() => new If(rawIf, new ReferenceRegistry()), Error);
         });
 
+        it('Tests two else branches throws', () => {
+            const rawIf = [
+                {block: [{name: '5451.56.close', params: []}], condition: '1 === 1', name: undefined},
+                {block: [{name: '5451.56.close', params: []}], condition: '', name: undefined},
+                {block: [{name: '5451.56.open', params: []}], condition: '', name: undefined}
+            ];
+
+            throws(() => new If(rawIf, new ReferenceRegistry()), /Too many else branches/);
+        });
+
+        it('Tests a single else branch does not throw', () => {
+            const rawIf = [
+                {block: [{name: '5451.56.close', params: []}], condition: '1 === 1', name: undefined},
+                {block: [{name: '5451.56.open', params: []}], condition: '', name: undefined}
+            ];
+
+            new If(rawIf, new ReferenceRegistry());
+        });
+
         it('Tests If evaluate If', () => {
             const rawIf = [
                 {

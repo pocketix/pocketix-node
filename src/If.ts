@@ -57,7 +57,7 @@ class If implements IEvaluable, IRepresentable {
         let elseCount = 0;
         this.conditions.forEach(condition => elseCount += +condition.isElse());
 
-        if (elseCount - 1 > 1) {
+        if (elseCount > 1) {
             throw Error('Too many else branches');
         }
     }
