@@ -5,6 +5,7 @@ import { IRepresentable } from './IRepresentable';
 import { Program } from './Program';
 import { ProgramRunner } from './ProgramRunner';
 import { ProgramRunnerError, ProgramRunnerErrorPhase } from './ProgramRunnerError';
+import { UnresolvedReferenceError } from './UnresolvedReferenceError';
 import { ValueType } from './ValueType';
 import { ReferencedValue, ReferencedValueItemsAsObject } from './ReferencedValue';
 
@@ -14,6 +15,7 @@ export {
     ProgramRunner,
     ProgramRunnerError,
     ProgramRunnerErrorPhase,
+    UnresolvedReferenceError,
     IReferenceManager,
     IRepresentable,
     ICommander,

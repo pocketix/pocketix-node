@@ -1,8 +1,9 @@
 import {Program} from '../src/Program';
-import {deepStrictEqual} from 'assert';
+import {deepStrictEqual, throws} from 'assert';
 import {ValueType} from '../src/ValueType';
 import {MockReferencedValue} from './MockReferencedValue';
 import {Command} from '../src/Command';
+import {UnresolvedReferenceError} from '../src/UnresolvedReferenceError';
 
 const programs: {[key: string]: any} = {
     noReferences: undefined,
@@ -329,6 +330,26 @@ describe('Test program', () => {
 
             deepStrictEqual(program.evaluate(), [command]);
             deepStrictEqual(program.getReferencesToUpdate(), [reference]);
+        });
+
+        it('Rejects a reference the host did not resolve', () => {
+            const program = new Program({block: programs.singleReferenceInCondition});
+
+            throws(
+                () => program.setReferencesTargets([]),
+                (e: unknown) => e instanceof UnresolvedReferenceError
+                    && deepStrictEqual(e.referenceTargets, ['5451.Relay1']) === undefined
+            );
+        });
+
+        it('Rejects only the reference(s) the host did not resolve, when some do resolve', () => {
+            const program = new Program({block: programs.twoReferences});
+
+            throws(
+                () => program.setReferencesTargets([referencedValues[1]]), // only 5451.Relay1
+                (e: unknown) => e instanceof UnresolvedReferenceError
+                    && deepStrictEqual(e.referenceTargets, ['5439.lvl_measurement_percent_full']) === undefined
+            );
         });
 
         it('Does not mutate the caller-supplied ReferencedValue objects', () => {

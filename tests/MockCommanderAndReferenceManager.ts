@@ -40,6 +40,14 @@ class MockCommanderAndReferenceManager implements IReferenceManager, ICommander 
                 _dirty: false,
                 _deviceId: 5451,
                 _parameterName: 'number'
+            }),
+
+            '1.flag': Object.assign(new MockReferencedValue(), {
+                _value: 0,
+                _type: ValueType.Number,
+                _dirty: false,
+                _deviceId: 1,
+                _parameterName: 'flag'
             })
         };
 

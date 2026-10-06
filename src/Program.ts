@@ -5,6 +5,7 @@ import {ReferencedValue} from './ReferencedValue';
 import {Reference} from './Operators';
 import {Command} from './Command';
 import {ReferenceRegistry} from './ReferenceRegistry';
+import {UnresolvedReferenceError} from './UnresolvedReferenceError';
 
 class Program implements IEvaluable, IRepresentable {
     private block: Block;
@@ -25,6 +26,8 @@ class Program implements IEvaluable, IRepresentable {
     }
 
     public setReferencesTargets(targets: ReferencedValue[]): void {
+        const unresolved = new Set<string>();
+
         this.registry.references.forEach(reference => {
             if (reference.referenceTarget) {
                 const target = targets.find(target =>
@@ -39,9 +42,15 @@ class Program implements IEvaluable, IRepresentable {
                     // it elsewhere, e.g. a shared device-state cache).
                     const TargetConstructor = target.constructor as new () => ReferencedValue;
                     this.registry.referenceTable[reference.referenceTarget] = Object.assign(new TargetConstructor(), target);
+                } else {
+                    unresolved.add(reference.referenceTarget);
                 }
             }
         });
+
+        if (unresolved.size > 0) {
+            throw new UnresolvedReferenceError([...unresolved]);
+        }
     }
 
     public getReferencesToUpdate(): ReferencedValue[] {

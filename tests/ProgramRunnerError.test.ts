@@ -6,6 +6,7 @@ import {IReferenceManager} from '../src/IReferenceManager';
 import {ICommander} from '../src/ICommander';
 import {ReferencedValue, ReferencedValueItemsAsObject} from '../src/ReferencedValue';
 import {Command} from '../src/Command';
+import {UnresolvedReferenceError} from '../src/UnresolvedReferenceError';
 
 class StubManager implements IReferenceManager, ICommander {
     constructor(
@@ -65,7 +66,7 @@ describe('Test ProgramRunnerError', () => {
         strictEqual(caught.phase, 'load');
     });
 
-    it('Wraps an unloaded reference dereference as an "evaluate" phase error', async () => {
+    it('Wraps a reference the host did not resolve as a "load" phase error', async () => {
         const runner = new ProgramRunner();
         const stub = new StubManager();
 
@@ -91,7 +92,9 @@ describe('Test ProgramRunnerError', () => {
         }
 
         strictEqual(caught instanceof ProgramRunnerError, true);
-        strictEqual(caught.phase, 'evaluate');
+        strictEqual(caught.phase, 'load');
+        strictEqual(caught.cause instanceof UnresolvedReferenceError, true);
+        strictEqual(caught.cause.referenceTargets[0], '1.missing');
     });
 
     it('Wraps a failing commander as a "sendCommands" phase error', async () => {

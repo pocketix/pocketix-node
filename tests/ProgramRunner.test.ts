@@ -296,3 +296,118 @@ describe('Test ProgramRunner', () => {
         deepStrictEqual(mockCommanderAndReferenceManager.referencedValuesStored, ['5451.number']);
     });
 });
+
+// Realistic sample programs combining multiple constructs in one full
+// load -> evaluate -> sendCommands -> store pipeline, rather than exercising
+// each construct (fork/if/switch/while) in isolation as the tests above and
+// each construct's own dedicated test file do. Conditions are reference- or
+// literal-based (never `hours(now)`) so these stay deterministic regardless
+// of when the suite runs.
+describe('Test ProgramRunner realistic sample programs', () => {
+    it('runs a switch statement nested inside a fork/if, matched by a loaded reference', async () => {
+        const program = [
+            {
+                name: 'fork',
+                block: [
+                    {
+                        name: 'if',
+                        block: [
+                            {
+                                name: 'switch',
+                                block: [
+                                    {
+                                        name: 'case',
+                                        block: [
+                                            {
+                                                name: '5451.56.close',
+                                                params: []
+                                            }
+                                        ],
+                                        condition: '5451.Relay1 === \'open\''
+                                    },
+                                    {
+                                        name: 'default',
+                                        block: [
+                                            {
+                                                name: '5451.56.open',
+                                                params: []
+                                            }
+                                        ],
+                                        condition: ''
+                                    }
+                                ],
+                                condition: ''
+                            }
+                        ],
+                        condition: '5439.lvl_measurement_percent_full > 10'
+                    },
+                    {
+                        name: 'else',
+                        block: [
+                            {
+                                name: '5451.56.open',
+                                params: []
+                            }
+                        ],
+                        condition: ''
+                    }
+                ],
+                condition: ''
+            }
+        ];
+
+        const programRunner = new ProgramRunner();
+        const mockCommanderAndReferenceManager = new MockCommanderAndReferenceManager();
+
+        programRunner.commander = mockCommanderAndReferenceManager;
+        programRunner.referenceManager = mockCommanderAndReferenceManager;
+        programRunner.parseProgram({block: program});
+
+        await programRunner.run(false);
+
+        // 5439.lvl_measurement_percent_full is 50 (> 10) so the `if` runs the
+        // switch; 5451.Relay1 is 'open' so the switch's `case` (not `default`)
+        // fires.
+        deepStrictEqual(mockCommanderAndReferenceManager.sendCommandsCalledWithCommands, [commandClose]);
+        deepStrictEqual(mockCommanderAndReferenceManager.referencesLoaded, [
+            '5439.lvl_measurement_percent_full',
+            '5451.Relay1',
+        ]);
+    });
+
+    it('runs a while loop that writes its own exit condition, through the full store pipeline', async () => {
+        const program = [
+            {
+                name: 'while',
+                condition: '1.flag === 0',
+                block: [
+                    {
+                        name: '5451.56.close',
+                        params: []
+                    },
+                    {
+                        name: 'write',
+                        params: ['1.flag', 1]
+                    }
+                ]
+            }
+        ];
+
+        const programRunner = new ProgramRunner();
+        const mockCommanderAndReferenceManager = new MockCommanderAndReferenceManager();
+
+        programRunner.commander = mockCommanderAndReferenceManager;
+        programRunner.referenceManager = mockCommanderAndReferenceManager;
+        programRunner.parseProgram({block: program});
+
+        await programRunner.run(false);
+
+        // 1.flag starts at 0, so the loop body runs once; the in-loop Write
+        // flips it to 1, so the re-checked condition is false on the second
+        // pass and the loop stops - exactly one command sent, and the flipped
+        // value persisted back via store().
+        deepStrictEqual(mockCommanderAndReferenceManager.sendCommandsCalledWithCommands, [commandClose]);
+        deepStrictEqual(mockCommanderAndReferenceManager.referencesLoaded, ['1.flag']);
+        deepStrictEqual(mockCommanderAndReferenceManager.referencedValuesStored, ['1.flag']);
+    });
+});
