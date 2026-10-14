@@ -1,4 +1,4 @@
-import {deepStrictEqual} from 'assert';
+import {deepStrictEqual, throws} from 'assert';
 import {ReferenceRegistry} from '../src/ReferenceRegistry';
 import {ValueType} from '../src/ValueType';
 import {Write} from '../src/Write';
@@ -8,8 +8,8 @@ import {Reference} from '../src/Operators';
 describe('Test Write', () => {
     it('Tests write represent', () => {
         const rawBlock = {
-            reference: '5451.56',
-            value: '10'
+            name: 'write',
+            params: ['5451.56', '10']
         };
 
         const block = new Write(rawBlock, new ReferenceRegistry());
@@ -22,8 +22,8 @@ describe('Test Write', () => {
         const referenceString = '11.number';
 
         const rawBlock = {
-            reference: referenceString,
-            value: expectedValue
+            name: 'write',
+            params: [referenceString, expectedValue]
         };
 
         const registry = new ReferenceRegistry();
@@ -50,5 +50,11 @@ describe('Test Write', () => {
         write.evaluate();
 
         deepStrictEqual(registry.referenceTable[referenceString], newReference);
+    });
+
+    it('Rejects a write without exactly [reference, value] params', () => {
+        throws(() => new Write({name: 'write', params: ['5451.56']}, new ReferenceRegistry()), /Malformed write/);
+        throws(() => new Write({name: 'write', params: ['5451.56', '1', '2']}, new ReferenceRegistry()), /Malformed write/);
+        throws(() => new Write({name: 'write'}, new ReferenceRegistry()), /Malformed write/);
     });
 });

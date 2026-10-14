@@ -121,12 +121,12 @@ describe('Test commandFactory', () => {
             strictEqual(result instanceof Command, true);
         });
 
-        it('Test reference created', () => {
+        it('Test write created', () => {
             const commandFactory = new CommandFactory();
 
             const result = commandFactory.create({
-                reference: '5451.56',
-                value: '10'
+                name: 'write',
+                params: ['5451.56', '10']
             }, new ReferenceRegistry());
 
             strictEqual(result instanceof Write, true);

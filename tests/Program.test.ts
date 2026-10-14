@@ -154,8 +154,8 @@ describe('Test program', () => {
                                         params: []
                                     },
                                     {
-                                        reference: '5451.number',
-                                        value: 1
+                                        name: 'write',
+                                        params: ['5451.number', 1]
                                     }
                                 ],
                                 condition: '5451.Relay1 === \'open\''
@@ -171,8 +171,8 @@ describe('Test program', () => {
                                 params: []
                             },
                             {
-                                reference: '5451.number',
-                                value: 0
+                                name: 'write',
+                                params: ['5451.number', 0]
                             }
                         ],
                         condition: ''

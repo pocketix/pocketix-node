@@ -149,8 +149,8 @@ describe('Test ProgramRunner', () => {
                                         params: []
                                     },
                                     {
-                                        reference: '5451.number',
-                                        value: 1
+                                        name: 'write',
+                                        params: ['5451.number', 1]
                                     }
                                 ],
                                 condition: '5451.Relay1 === \'open\''
@@ -166,8 +166,8 @@ describe('Test ProgramRunner', () => {
                                 params: []
                             },
                             {
-                                reference: '5451.number',
-                                value: 0
+                                name: 'write',
+                                params: ['5451.number', 0]
                             }
                         ],
                         condition: ''
@@ -277,5 +277,22 @@ describe('Test ProgramRunner', () => {
             '5451.Relay1',
             '5451.number',
         ]);
+    });
+
+    it('Tests run write saved by the editors', async () => {
+        const programRunner = new ProgramRunner();
+        const mockCommanderAndReferenceManager = new MockCommanderAndReferenceManager();
+
+        programRunner.commander = mockCommanderAndReferenceManager;
+        programRunner.referenceManager = mockCommanderAndReferenceManager;
+        // Shape both editors save a write as (iotix-shared-tests fixtures/programs/write.json),
+        // after the host has replaced names with ids.
+        programRunner.parseProgram({block: [{name: 'write', params: ['5451.number', '21']}]});
+
+        const {commands, toUpdate} = await programRunner.run(false);
+
+        deepStrictEqual(commands, []);
+        deepStrictEqual(toUpdate.map(reference => [reference.referenceTarget, reference.value]), [['5451.number', '21']]);
+        deepStrictEqual(mockCommanderAndReferenceManager.referencedValuesStored, ['5451.number']);
     });
 });

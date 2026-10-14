@@ -29,12 +29,12 @@ class CommandFactory {
             return new While(json, registry);
         }
 
-        if (json.hasOwnProperty('name') && json.hasOwnProperty('params')) {
-            return new Command(json);
+        if (json.hasOwnProperty('name') && (json as any).name === Write.NAME) {
+            return new Write(json, registry);
         }
 
-        if (json.hasOwnProperty('reference') && json.hasOwnProperty('value')) {
-            return new Write(json, registry);
+        if (json.hasOwnProperty('name') && json.hasOwnProperty('params')) {
+            return new Command(json);
         }
 
         throw new Error('No fitting commendable');

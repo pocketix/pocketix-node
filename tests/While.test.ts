@@ -37,7 +37,7 @@ describe('Test While', () => {
 
     it('runs the body while a reference-backed condition holds, then stops', () => {
         const registry = new ReferenceRegistry();
-        const raw = {condition: '1.flag === 0', block: [{reference: '1.flag', value: 1}]};
+        const raw = {condition: '1.flag === 0', block: [{name: 'write', params: ['1.flag', 1]}]};
         const w = new While(raw, registry);
 
         registry.referenceTable['1.flag'] = Object.assign(new MockReferencedValue(), {
@@ -62,7 +62,7 @@ describe('Test While', () => {
             condition: '1.flag === 0',
             block: [
                 {name: '1.56.close', params: []},
-                {reference: '1.flag', value: 1}
+                {name: 'write', params: ['1.flag', 1]}
             ]
         };
         const w = new While(raw, registry);
