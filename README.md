@@ -56,7 +56,7 @@ npm run test
 We welcome contributions! To get involved:
 
 1) Fork the repo and create a new branch for your feature/fix
-2) Follow our code style (checked via ESLint in `.eslintrc.json`)
+2) Follow our code style (checked via TSLint in `tslint.json`)
 3) Test your changes to ensure everything works smoothly
 4) Submit a pull request with a clear summary of your work
 
